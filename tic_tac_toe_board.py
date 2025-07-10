@@ -18,7 +18,7 @@ class TicTacToeBoard:
     )
     
     TIC_TAC_TOE_GAME_STATE_KEY = "tic_tac_toe:game_state:{team}"
-    team_number = 0
+    team_number = "TA"
     key = TIC_TAC_TOE_GAME_STATE_KEY.format(team=team_number)
     
     def serialize(self):
@@ -29,7 +29,7 @@ class TicTacToeBoard:
         })
         
     def save_to_redis(self):
-        pass
+        self.r.json().set(self.key, ".", self.serialize())
     
         
     def is_my_turn(self, i_am):
