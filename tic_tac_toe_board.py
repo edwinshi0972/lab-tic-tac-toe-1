@@ -1,5 +1,8 @@
 from dataclasses import dataclass, field
 from typing import List
+import redis
+import os
+import json
 
 @dataclass
 class TicTacToeBoard:
@@ -7,6 +10,28 @@ class TicTacToeBoard:
     player_turn: str = "x"
     positions: List[str] = field(default_factory=lambda: ["", "", "", "", "", "", "", "", ""], init=False)
     
+    redis_password = os.getenv('REDIS_PASSWORD')
+    r = redis.Redis(
+        host='ai.thewcl.com',  # Replace with your Redis host
+        port=6379,               # Default port is 6379
+        password=redis_password # Replace with your Redis password
+    )
+    
+    TIC_TAC_TOE_GAME_STATE_KEY = "tic_tac_toe:game_state:{team}"
+    team_number = 0
+    key = TIC_TAC_TOE_GAME_STATE_KEY.format(team=team_number)
+    
+    def serialize(self):
+        return json.dumps({
+            "state": self.state,
+            "player_turn": self.player_turn,
+            "positions": self.positions
+        })
+        
+    def save_to_redis(self):
+        pass
+    
+        
     def is_my_turn(self, i_am):
         return self.player_turn == i_am
     
